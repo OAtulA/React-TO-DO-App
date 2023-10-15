@@ -41,7 +41,7 @@
   color: #888;
 }
 
-.TO_DO_List{
+.flexCOntainer{
   display: flex;
   justify-self: center;
 }

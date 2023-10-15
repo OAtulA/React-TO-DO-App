@@ -1,93 +1,109 @@
-import { useReducer, useState, useRef } from "react"
+import "./App.css"
+import { useReducer, useState, useRef } from "react";
 
-let taskList = []
+let taskList = [];
+
 function reducer(prevTasks, action) {
-  console.log('sometask');
+  console.log("sometask");
   let newTasks;
   switch (action.type) {
     case "ADD":
       newTasks = [...prevTasks, action.newEntry];
       return newTasks;
     case "EDIT":
-      newTasks = [...prevTasks]
+      newTasks = [...prevTasks];
       newTasks[action.index] = action.newEntry;
-      return newTasks
+      return newTasks;
     case "DELETE":
-      newTasks = prevTasks.filter((task, index) => index !== action.index)
-      return newTasks
+      newTasks = prevTasks.filter((task, index) => index !== action.index);
+      return newTasks;
     default:
-      return prevTasks
+      return prevTasks;
   }
 }
 
-//This will form the li of task list
 function Task(props) {
-  // let TaskName= "Wonder";
-  // let ind =0;
-  // let [editFormDisplay, set_editFormDisplay] = useState("dispNone")
-  let FormDisplay = useRef("dispNone")
-  let TaskRef = useRef(null)
+  let FormDisplay = useRef("dispNone");
+  let TaskRef = useRef(null);
+
   function handleDelete() {
-    props.taskDispatch({ type: "DELETE", index: props.ind })
+    props.taskDispatch({ type: "DELETE", index: props.ind });
   }
-  function handleEdit() {
+
+  function handleEdit(event) {
     event.preventDefault();
-    props.taskDispatch(
-      { 
-        type: "EDIT", 
-        index: props.ind, 
-        newEntry: TaskRef.current.value 
-      })
+    props.taskDispatch({
+      type: "EDIT",
+      index: props.ind,
+      newEntry: TaskRef.current.value
+    });
+    FormDisplay.current = "dispNone";
   }
+
   return (
     <>
       <div className="Task">
-
-        <input type="checkbox" className="taskName" ref={TaskRef}>{props.TaskName}</input>
-        <form action={handleEdit} className={FormDisplay}>
+        <input type="checkbox" className="taskName" ref={TaskRef} />
+        {props.TaskName}
+        <form className={FormDisplay.current} onSubmit={handleEdit}>
           <input type="text" name="EditTask" id="editTask" />
-          <button type="submit" onClick={FormDisplay.current= "dispNone"}></button>
+          <button type="submit" onClick={() => (FormDisplay.current = "dispNone")}>
+            Save
+          </button>
         </form>
-        <button className="edit" onClick={FormDisplay.current= ("visibleTaskEdit") }>Edit</button>
-        <button className="delete" onClick={handleDelete}>Delete</button>
+        <button className="edit" onClick={() => (FormDisplay.current = "visibleTaskEdit")}>
+          Edit
+        </button>
+        <button className="delete" onClick={handleDelete}>
+          Delete
+        </button>
       </div>
     </>
-  )
+  );
 }
 
-
 function App() {
-
   const [tasks, taskDispatch] = useReducer(reducer, taskList);
-  let inputREf = useRef(null)
+  let inputRef = useRef(null);
+
   function addTask(task, ind) {
-    return (<li>
-    <Task TaskName={task} ind={ind} taskDispatch={taskDispatch} />
-    </li>)
+    return (
+      <li key={ind}>
+        <Task TaskName={task} ind={ind} taskDispatch={taskDispatch} />
+      </li>
+    );
   }
 
-  function addEntry() {
-    const newTask = inputREf.current.value;
-    taskDispatch({ type: "ADD", newEntry: newTask })
+  function addEntry(event) {
+    event.preventDefault()
+    const newTask = inputRef.current.value;
+    taskDispatch({ type: "ADD", newEntry: newTask });
   }
 
+  let taskItems = tasks.length === 0 ? <h2>Empty List</h2> : tasks.map(addTask);
 
   return (
     <>
       <h1>TO DO List</h1>
-      <div className="TO_DO_List">
-        <input type="text" name="newEntry" id="newEntry" placeholder="Good Task" ref={inputREf} /><br />
-        <button className="addEntry" onClick={addEntry}></button>
-        <hr />
-        <ul className="Tasks">
-          {
-            (!tasks.length) ?
-              tasks.map(addTask(task, ind)) : <h2>Empty List</h2>
-          }
-        </ul>
+      <div className="flexCOntainer">
+
+
+        <div className="TO_DO_List">
+          <input type="text" name="newEntry" id="newEntry" placeholder="Good Task" ref={inputRef} />
+          <br />
+          <button className="addEntry" onClick={addEntry}>
+            Entry
+          </button>
+          <hr />
+
+          <ul>
+            {/* {tasks.length === 0 ? <h2>Empty List</h2> : tasks.map(addTask)} */}
+            {taskItems}
+          </ul>
+        </div>
       </div>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
