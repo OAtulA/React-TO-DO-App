@@ -1,7 +1,8 @@
 import "./App.css"
-import { useReducer, useState, useRef } from "react";
+import { useReducer, useState, useRef, useEffect } from "react";
 
-let taskList = [];
+//To read the task list if already stored in the localStorage
+let taskList = JSON.parse(localStorage.getItem("taskList")) ||[];
 
 function reducer(prevTasks, action) {
   console.log("sometask");
@@ -23,8 +24,10 @@ function reducer(prevTasks, action) {
 }
 
 function Task(props) {
-  let FormDisplay = useRef("dispNone");
+  // let FormDisplay = useRef("dispNone");
+  let [FormDisplay,setFormDisplay] = useState("dispNone");
   let TaskRef = useRef(null);
+  let editedTask = useRef(null);
 
   function handleDelete() {
     props.taskDispatch({ type: "DELETE", index: props.ind });
@@ -35,9 +38,9 @@ function Task(props) {
     props.taskDispatch({
       type: "EDIT",
       index: props.ind,
-      newEntry: TaskRef.current.value
+      newEntry: editedTask.current.value
     });
-    FormDisplay.current = "dispNone";
+    setFormDisplay("dispNone");
   }
 
   return (
@@ -45,13 +48,13 @@ function Task(props) {
       <div className="Task">
         <input type="checkbox" className="taskName" ref={TaskRef} />
         {props.TaskName}
-        <form className={FormDisplay.current} onSubmit={handleEdit}>
-          <input type="text" name="EditTask" id="editTask" />
-          <button type="submit" onClick={() => (FormDisplay.current = "dispNone")}>
+        <form className={FormDisplay} onSubmit={handleEdit}>
+          <input type="text" name="EditTask" id="editTask" ref={editedTask} />
+          <button type="submit" onClick={() => (setFormDisplay("dispNone") )}>
             Save
           </button>
         </form>
-        <button className="edit" onClick={() => (FormDisplay.current = "visibleTaskEdit")}>
+        <button className="edit" onClick={() => setFormDisplay( "visibleTaskEdit")}>
           Edit
         </button>
         <button className="delete" onClick={handleDelete}>
@@ -81,6 +84,10 @@ function App() {
   }
 
   let taskItems = tasks.length === 0 ? <h2>Empty List</h2> : tasks.map(addTask);
+
+  useEffect(()=>{
+    localStorage.setItem("taskList", JSON.stringify(tasks));
+  },[tasks])
 
   return (
     <>
