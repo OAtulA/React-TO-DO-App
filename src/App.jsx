@@ -23,6 +23,8 @@ function reducer(prevTasks, action) {
   }
 }
 
+//I intend to also add timer and task remainders in the future.
+
 function Task(props) {
   // let FormDisplay = useRef("dispNone");
   let [FormDisplay,setFormDisplay] = useState("dispNone");
@@ -84,7 +86,7 @@ function App() {
   }
 
   let taskItems = tasks.length === 0 ? <h2>Empty List</h2> : tasks.map(addTask);
-
+  
   useEffect(()=>{
     localStorage.setItem("taskList", JSON.stringify(tasks));
   },[tasks])
