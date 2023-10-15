@@ -24,24 +24,31 @@ function reducer(prevTasks, action) {
 function Task(props) {
   // let TaskName= "Wonder";
   // let ind =0;
-  let [editFormDisplay, set_editFormDisplay] = useState("dispNone")
+  // let [editFormDisplay, set_editFormDisplay] = useState("dispNone")
+  let FormDisplay = useRef("dispNone")
   let TaskRef = useRef(null)
   function handleDelete() {
     props.taskDispatch({ type: "DELETE", index: props.ind })
   }
   function handleEdit() {
-    props.taskDispatch({ type: "EDIT", index: props.ind, newEntry: TaskRef.current.value })
+    event.preventDefault();
+    props.taskDispatch(
+      { 
+        type: "EDIT", 
+        index: props.ind, 
+        newEntry: TaskRef.current.value 
+      })
   }
   return (
     <>
       <div className="Task">
 
         <input type="checkbox" className="taskName" ref={TaskRef}>{props.TaskName}</input>
-        <form action={handleEdit} className={editFormDisplay}>
+        <form action={handleEdit} className={FormDisplay}>
           <input type="text" name="EditTask" id="editTask" />
-          <button type="submit" onClick={set_editFormDisplay("dispNone")}></button>
+          <button type="submit" onClick={FormDisplay.current= "dispNone"}></button>
         </form>
-        <button className="edit" onClick={set_editFormDisplay("visibleTaskEdit")}>Edit</button>
+        <button className="edit" onClick={FormDisplay.current= ("visibleTaskEdit") }>Edit</button>
         <button className="delete" onClick={handleDelete}>Delete</button>
       </div>
     </>
